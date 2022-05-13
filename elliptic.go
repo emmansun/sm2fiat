@@ -192,7 +192,17 @@ func (curve *sm2Curve) UnmarshalCompressed(data []byte) (x, y *big.Int) {
 	return curve.pointToAffine(p)
 }
 
+func initAll() {
+	initSM2P256()
+	initP256()
+}
+
 func SM2P256() elliptic.Curve {
-	initonce.Do(initSM2P256)
+	initonce.Do(initAll)
 	return sm2p256
+}
+
+func OldSM2P256() elliptic.Curve {
+	initonce.Do(initAll)
+	return p256
 }

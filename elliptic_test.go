@@ -22,6 +22,7 @@ func testAllCurves(t *testing.T, f func(*testing.T, elliptic.Curve)) {
 		curve elliptic.Curve
 	}{
 		{"SM2P256", SM2P256()},
+		{"OldSM2P256", OldSM2P256()},
 		{"SM2P256/Params", genericParamsForCurve(SM2P256())},
 	}
 	if testing.Short() {
@@ -226,6 +227,7 @@ func benchmarkAllCurves(b *testing.B, f func(*testing.B, elliptic.Curve)) {
 		curve elliptic.Curve
 	}{
 		{"SM2P256", SM2P256()},
+		{"OldSM2P256", OldSM2P256()},
 	}
 	for _, test := range tests {
 		curve := test.curve
