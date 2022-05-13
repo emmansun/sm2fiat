@@ -140,9 +140,9 @@ const tmplNISTEC = `// Copyright 2022 The Go Authors. All rights reserved.
 //go:build {{ .BuildTags }}
 // +build {{ .BuildTags }}
 {{ end }}
-package sm2fiat
+package sm2c
 import (
-	"github.com/emmansun/sm2fiat/fiat"
+	"github.com/emmansun/sm2fiat/sm2c/fiat"
 	"crypto/subtle"
 	"errors"
 	"sync"

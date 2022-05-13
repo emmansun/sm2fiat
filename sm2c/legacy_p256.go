@@ -1,5 +1,5 @@
 // copy from github.com/emmansun/gmsm/sm2 for comparison
-package sm2fiat
+package sm2c
 
 import (
 	"crypto/elliptic"

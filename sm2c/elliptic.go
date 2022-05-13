@@ -1,4 +1,5 @@
-package sm2fiat
+// Package sm2c represents sm2 ellptic curve implementation
+package sm2c
 
 import (
 	"crypto/elliptic"

@@ -1,4 +1,4 @@
-package sm2fiat
+package sm2c
 
 import (
 	"crypto/elliptic"
