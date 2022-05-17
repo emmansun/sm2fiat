@@ -7,6 +7,8 @@ import (
 	"testing"
 )
 
+var _ = elliptic.P256() // force NIST P curves init, avoid panic when we invoke generic implementation's method
+
 // genericParamsForCurve returns the dereferenced CurveParams for
 // the specified curve. This is used to avoid the logic for
 // upgrading a curve to its specific implementation, forcing
