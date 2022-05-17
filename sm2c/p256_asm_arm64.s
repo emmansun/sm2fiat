@@ -1590,6 +1590,6 @@ TEXT ·p256PointAddAsm(SB),0,$392-32
 	STx(y3out)
 
 	MOVD	hlp1, R0
-	MOVD	R0, ret+72(FP)
+	MOVD	R0, ret+24(FP)
 
 	RET
