@@ -2,6 +2,7 @@ package sm2c
 
 import (
 	"crypto/elliptic"
+	"crypto/rand"
 	"math/big"
 	"testing"
 )
@@ -255,5 +256,37 @@ func TestIssue52075(t *testing.T) {
 	x, y = SM2P256().ScalarMult(Gx, Gy, scalar)
 	if x.Cmp(Gx) != 0 || y.Cmp(Gy) != 0 {
 		t.Errorf("unexpected output (%v,%v)", x, y)
+	}
+}
+
+func TestUnmarshal(t *testing.T) {
+	SM2P256()
+	_, x, y, err := elliptic.GenerateKey(sm2p256, rand.Reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+	serialized := elliptic.Marshal(sm2p256, x, y)
+	xx, yy := sm2p256.Unmarshal(serialized)
+	if xx == nil {
+		t.Fatal("failed to unmarshal")
+	}
+	if xx.Cmp(x) != 0 || yy.Cmp(y) != 0 {
+		t.Fatal("unmarshal returned different values")
+	}
+}
+
+func TestUnmarshalCompressed(t *testing.T) {
+	SM2P256()
+	_, x, y, err := elliptic.GenerateKey(sm2p256, rand.Reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+	serialized := elliptic.MarshalCompressed(sm2p256, x, y)
+	xx, yy := sm2p256.UnmarshalCompressed(serialized)
+	if xx == nil {
+		t.Fatal("failed to unmarshal")
+	}
+	if xx.Cmp(x) != 0 || yy.Cmp(y) != 0 {
+		t.Fatal("unmarshal returned different values")
 	}
 }
