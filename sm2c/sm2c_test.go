@@ -8,6 +8,7 @@ import (
 
 // r = 2^256
 var r = bigFromHex("010000000000000000000000000000000000000000000000000000000000000000")
+var r0 = bigFromHex("010000000000000000")
 var sm2Prime = bigFromHex("FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000FFFFFFFFFFFFFFFF")
 var sm2n = bigFromHex("FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFF7203DF6B21C6052B53BBF40939D54123")
 var nistP256Prime = bigFromDecimal("115792089210356248762697446949407573530086143415290314195533631308867097853951")
@@ -66,6 +67,31 @@ func TestSM2P256MontgomeryDomainN(t *testing.T) {
 		out := generateMontgomeryDomain(bigFromHex(test.in), sm2n)
 		if out.Cmp(bigFromHex(test.out)) != 0 {
 			t.Errorf("expected %v, got %v", test.out, hex.EncodeToString(out.Bytes()))
+		}
+	}
+}
+
+func TestSM2P256MontgomeryK0(t *testing.T) {
+	tests := []struct {
+		in  *big.Int
+		out string
+	}{
+		{
+			sm2n,
+			"327f9e8872350975",
+		},
+		{
+			sm2Prime,
+			"0000000000000001",
+		},
+	}
+	for _, test := range tests {
+		// k0 = -in^(-1) mod 2^64
+		k0 := new(big.Int).ModInverse(test.in, r0)
+		k0.Neg(k0)
+		k0.Mod(k0, r0)
+		if k0.Cmp(bigFromHex(test.out)) != 0 {
+			t.Errorf("expected %v, got %v", test.out, hex.EncodeToString(k0.Bytes()))
 		}
 	}
 }
