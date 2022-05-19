@@ -1,4 +1,4 @@
-// Package sm2c implements the SM2 P elliptic curves.
+// Package sm2c implements the SM2 Prime elliptic curves.
 //
 // This package uses fiat-crypto or specialized assembly and Go code for its
 // backend field arithmetic (not math/big) and exposes constant-time, heap
