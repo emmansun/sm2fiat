@@ -1,8 +1,10 @@
 package sm2c
 
 import (
+	"bytes"
 	"crypto/elliptic"
 	"crypto/rand"
+	"encoding/hex"
 	"math/big"
 	"testing"
 )
@@ -209,6 +211,63 @@ func testInvalidCoordinates(t *testing.T, curve elliptic.Curve) {
 			t.Fatal("(0, mod_sqrt(B)) is not on the curve?")
 		}
 		checkIsOnCurveFalse("P, y", p, yy)
+	}
+}
+
+func TestMarshalCompressed(t *testing.T) {
+	t.Run("P-256/03", func(t *testing.T) {
+		data, _ := hex.DecodeString("031b5709a068f5c1d05d0a61c0c70a13310df2d3a6c2ca9c9bba53337ea3e10de3")
+		x, _ := new(big.Int).SetString("1b5709a068f5c1d05d0a61c0c70a13310df2d3a6c2ca9c9bba53337ea3e10de3", 16)
+		y, _ := new(big.Int).SetString("a7ac81d1fdd4fcd224bbd95183136f948861812594ef24bd867c23d955fee3bb", 16)
+		testMarshalCompressed(t, SM2P256(), x, y, data)
+	})
+	t.Run("P-256/02", func(t *testing.T) {
+		data, _ := hex.DecodeString("0258f9a2efca4139f2b07662b937439a719ea3bf59d7de346c365db7c85d4bc32a")
+		x, _ := new(big.Int).SetString("58f9a2efca4139f2b07662b937439a719ea3bf59d7de346c365db7c85d4bc32a", 16)
+		y, _ := new(big.Int).SetString("02680fbe48b1d8cf023d0b7c1d9ab9b56535384729db5fcb8db29ec72c7fc9ca", 16)
+		testMarshalCompressed(t, SM2P256(), x, y, data)
+	})
+
+	t.Run("Invalid", func(t *testing.T) {
+		data, _ := hex.DecodeString("02fd4bf61763b46581fd9174d623516cf3c81edd40e29ffa2777fb6cb0ae3ce535")
+		X, Y := elliptic.UnmarshalCompressed(SM2P256(), data)
+		if X != nil || Y != nil {
+			t.Error("expected an error for invalid encoding")
+		}
+	})
+
+	if testing.Short() {
+		t.Skip("skipping other curves on short test")
+	}
+
+	testAllCurves(t, func(t *testing.T, curve elliptic.Curve) {
+		_, x, y, err := elliptic.GenerateKey(curve, rand.Reader)
+		if err != nil {
+			t.Fatal(err)
+		}
+		testMarshalCompressed(t, curve, x, y, nil)
+	})
+}
+
+func testMarshalCompressed(t *testing.T, curve elliptic.Curve, x, y *big.Int, want []byte) {
+	if !curve.IsOnCurve(x, y) {
+		t.Fatal("invalid test point")
+	}
+	got := elliptic.MarshalCompressed(curve, x, y)
+	if want != nil && !bytes.Equal(got, want) {
+		t.Errorf("got unexpected MarshalCompressed result: got %x, want %x", got, want)
+	}
+
+	X, Y := elliptic.UnmarshalCompressed(curve, got)
+	if X == nil || Y == nil {
+		t.Fatalf("UnmarshalCompressed failed unexpectedly")
+	}
+
+	if !curve.IsOnCurve(X, Y) {
+		t.Error("UnmarshalCompressed returned a point not on the curve")
+	}
+	if X.Cmp(x) != 0 || Y.Cmp(y) != 0 {
+		t.Errorf("point did not round-trip correctly: got (%v, %v), want (%v, %v)", X, Y, x, y)
 	}
 }
 
