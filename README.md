@@ -53,4 +53,4 @@ POC generate sm2 p256 curve with fiat-crypto &amp; addchain
     BenchmarkMarshalUnmarshal/SM2ASMP256/Uncompressed-6      	 1000000	      1553 ns/op	     448 B/op	       7 allocs/op
     BenchmarkMarshalUnmarshal/SM2ASMP256/Compressed-6        	   14233	     82423 ns/op	    3833 B/op	     127 allocs/op
 
-For performance of marshal unmarkshal, depends on golang sdk, the performance will be improved since golang sdk 1.19.
+For performance of unmarkshal, depends on golang sdk, the performance will be improved since golang sdk 1.19.
