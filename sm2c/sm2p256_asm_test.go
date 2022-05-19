@@ -133,17 +133,3 @@ func Test_p256Inverse(t *testing.T) {
 		t.Errorf("expected %v, got %v", hex.EncodeToString(xInv.Bytes()), hex.EncodeToString(resInt.Bytes()))
 	}
 }
-
-func TestP256OrdInverse(t *testing.T) {
-	n, _ := new(big.Int).SetString("FFFFFFFEFFFFFFFFFFFFFFFFFFFFFFFF7203DF6B21C6052B53BBF40939D54123", 16)
-	x, _ := new(big.Int).SetString("32C4AE2C1F1981195F9904466A39C9948FE30BBFF2660BE1715A4589334C74C7", 16)
-	xInv1 := new(big.Int).ModInverse(x, n)
-	xInv2, err := P256OrdInverse(x.Bytes())
-	if err != nil {
-		t.Error(err)
-	}
-
-	if xInv1.Cmp(new(big.Int).SetBytes(xInv2)) != 0 {
-		t.FailNow()
-	}
-}
