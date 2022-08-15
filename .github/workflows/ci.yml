@@ -37,3 +37,6 @@ jobs:
           
     - name: Test
       run: go test -v ./...
+
+    - name: Test Generic
+      run: go test -v -tags generic ./...

@@ -7,8 +7,8 @@
 //                          256-bit primes"
 // https://link.springer.com/article/10.1007%2Fs13389-014-0090-x
 // https://eprint.iacr.org/2013/816.pdf
-//go:build amd64 || arm64
-// +build amd64 arm64
+//go:build (amd64 && !generic) || (arm64 && !generic)
+// +build amd64,!generic arm64,!generic
 
 package sm2c
 
@@ -47,15 +47,14 @@ func NewP256Point() *P256Point {
 	}
 }
 
-// NewP256Generator returns a new P256Point set to the canonical generator.
-func NewP256PointGenerator() *P256Point {
-	return &P256Point{
-		x: p256Element{0x61328990f418029e, 0x3e7981eddca6c050,
-			0xd6a1ed99ac24c3c3, 0x91167a5ee1c13b05},
-		y: p256Element{0xc1354e593c2d0ddd, 0xc1f5e5788d3295fa,
-			0x8d4cfb066e2a48f8, 0x63cd65d481d735bd},
-		z: p256One,
-	}
+// SetGenerator sets p to the canonical generator and returns p.
+func (p *P256Point) SetGenerator() *P256Point {
+	p.x = p256Element{0x61328990f418029e, 0x3e7981eddca6c050,
+		0xd6a1ed99ac24c3c3, 0x91167a5ee1c13b05}
+	p.y = p256Element{0xc1354e593c2d0ddd, 0xc1f5e5788d3295fa,
+		0x8d4cfb066e2a48f8, 0x63cd65d481d735bd}
+	p.z = p256One
+	return p
 }
 
 // Set sets p = q and returns p.
@@ -739,7 +738,7 @@ func p256Inverse(out, in *p256Element) {
 // to compute the least significant recoded digit, given that there's no bit
 // b_-1, has to be b_4 b_3 b_2 b_1 b_0 0.
 //
-// Reference: 
+// Reference:
 // https://github.com/openssl/openssl/blob/master/crypto/ec/ecp_nistputil.c
 // https://github.com/google/boringssl/blob/master/crypto/fipsmodule/ec/util.c
 func boothW5(in uint) (int, int) {
